@@ -33,9 +33,9 @@ export const TNDataTable: React.FC<TNDataTableProp> = ({ tblData, colDefs, order
     // re-rendering of the DataTable is done by JQuery
     if (dt) {
       reloadTableData(dt, tblData);
-      if (tblData.length == 0) clearFilter(dt);
-      else initHeaderFilters(dt);
-      console.log("refresh: ", tblData.length);
+      if (tblData && tblData.length > 0) initHeaderFilters(dt);
+      else clearFilter(dt);
+      console.log("refresh: ", tblData ? tblData.length : 0);
     }
   }, [tblData]) // run only when the data changed
 

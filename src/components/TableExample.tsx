@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ConfigColumns } from 'datatables.net-dt';
-import { useData } from "../utils/react_util";
+import { useAsyncStatus, FuncResult } from "../utils/react_util";
 import { ColSortOrder } from "../utils/datatable_util";
 import TNDataTable from "./TNDataTable";
 import { getExampleData } from "../data/api";
@@ -77,18 +77,39 @@ const order: ColSortOrder = [[6, "desc"]];
 
 const TableExample: React.FC = (props): JSX.Element => {
 
+  // setup a closure to capture the refresh variable
+  let refresh = false;
+  const getData = () => getExampleData(refresh);
+
+  const [tblData, setTblData] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
+
+
   // calling custom hook to load the data
   const [
-    tblData, // data from the web service
     loading, // disable the refresh btn while waiting for the data
-    message, // display loading or error message
-    retrieveData // function to reload the data
-  ] = useData(getExampleData) as [any[], boolean, string, (refresh: boolean) => void];
+    callFuncAsync // function to reload the data
+  ] = useAsyncStatus(getData) as [boolean, () => Promise<FuncResult>];
+
+
+  function loadData() {
+    setMessage("Load data. Please wait...");
+    callFuncAsync()
+      .then(result => {
+        setTblData(result.success ? result.data : []);
+        setMessage(result.success ? "" : "Loading data failed. An error has occurred.");
+        refresh = false;
+      });
+  }
+
+  useEffect(() => loadData(), []);
 
   function Refresh() {
     // call the web service
     // false: get the data from cache
-    retrieveData(true);
+    refresh = true;
+    setTblData([]); // clear the data
+    loadData();
   }
 
   return (

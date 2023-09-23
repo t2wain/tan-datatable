@@ -4,39 +4,29 @@
  * 
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-type GetDataFunc = (refresh: boolean) => Promise<any>;
+type FuncAsync = () => Promise<any>;
+export type FuncResult = { success: boolean, data: any };
 
-export function useData(getData: GetDataFunc) {
-  const [tblData, setTblData] = useState<any[]>([]);
+export function useAsyncStatus(funcAsync: FuncAsync) {
+
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    // get data from cache if available
-    // otherwise from API
-    retrieveData(false);
-  }, []);
+  const callFuncAsync = async (): Promise<FuncResult> => {
+    setLoading(true);
 
-  const retrieveData = (refresh: boolean) => {
-    setMessage("Please wait. Retrieving data....");
-    setLoading(true); // start loading
-    // clear data
-    setTblData([]);
-    // get data from API if refresh
-    // or from brower session storage
-    getData(refresh)
-      .then((data) => {
-        setLoading(false); // finish loading
-        setTblData(data); // populate data in table
-        setMessage("");
-      })
-      .catch((err) => {
-        setMessage("Failed to retrieve data. Please refresh the data again.");
-        setLoading(false); // finish loading
-      });
+    let result = { success: false, data: null };
+    try {
+      result = { success: true, data: await funcAsync() };
+    }
+    catch (err: any) {
+      result = { success: false, data: err };
+    }
+
+    setLoading(false);
+    return result;
   };
 
-  return [tblData, loading, message, retrieveData];
+  return [loading, callFuncAsync];
 }
