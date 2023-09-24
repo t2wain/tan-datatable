@@ -16,17 +16,22 @@ export const TNDataTable: React.FC<TNDataTableProp> = ({ tblData, colDefs, order
 
 
   useEffect(() => {
+    if (dt) {
+      destroy(dt);
+      console.log("re-init data table.");
+    }
+
     // A one time setup of the DataTable when the component mounted
-    const dt = init(htmlTableRef.current as HTMLTableElement, colDefs, order, tblData);
-    setDt(dt);
+    const ldt = init(htmlTableRef.current as HTMLTableElement, colDefs, order, tblData);
+    setDt(ldt);
     console.log("mounted");
     return () => {
       // cleanup when component unmounted
-      destroy(dt);
+      destroy(ldt);
       setDt(undefined);
       console.log("unmounted");
     }
-  }, []); // ensure only run once
+  }, [colDefs]);
 
 
   useEffect(() => {
@@ -37,7 +42,7 @@ export const TNDataTable: React.FC<TNDataTableProp> = ({ tblData, colDefs, order
       else clearFilter(dt);
       console.log("refresh: ", tblData ? tblData.length : 0);
     }
-  }, [tblData]) // run only when the data changed
+  }, [tblData, colDefs]) // run only when the data changed
 
 
 
