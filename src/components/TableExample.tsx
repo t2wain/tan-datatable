@@ -117,7 +117,7 @@ const TableExample: React.FC = (props): JSX.Element => {
       <h2 className="h2 text-center">Data Table with React Typescript</h2>
       <div className="mt-5 mb-3">
         <button className="btn btn-primary" disabled={loading} onClick={Refresh}>Refresh</button>
-        <span className={(message ? "visible" : "invisible") + " mx-3 py-1 px-2 text-bg-success bg-opacity-50"}>{message}</span>
+        { message ? <span className=" mx-3 py-1 px-2 text-bg-success bg-opacity-50">{message}</span> : null }
       </div>
       {/* Display the data in the DataTable */}
       <TNDataTable {...{ tblData, colDefs, order }} />

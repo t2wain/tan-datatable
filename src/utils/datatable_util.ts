@@ -192,6 +192,7 @@ export function clearFilter(dt: Api<any>) {
 }
 
 // currently not being used
+/*
 export function createColumnFooter(settings: object, json: object) {
   createColumnHeader(settings, json);
   const api: Api<any> = new $.fn.dataTable.Api(settings);
@@ -218,3 +219,4 @@ export function createColumnFooter(settings: object, json: object) {
       });
   });
 }
+*/
