@@ -6,19 +6,19 @@
 
 import { useState } from "react";
 
-type FuncAsync = () => Promise<any>;
+type FuncAsync<T> = (arg? : T | undefined) => Promise<any>;
 export type FuncResult = { success: boolean, data: any };
 
-export function useAsyncStatus(funcAsync: FuncAsync) {
+export function useAsyncStatus<T>(funcAsync: FuncAsync<T>) : [boolean, FuncAsync<T>] {
 
   const [loading, setLoading] = useState(false);
 
-  const callFuncAsync = async (): Promise<FuncResult> => {
+  const callFuncAsync : FuncAsync<T> = async (arg?) => {
     setLoading(true);
 
     let result = { success: false, data: null };
     try {
-      result = { success: true, data: await funcAsync() };
+      result = { success: true, data: await funcAsync(arg) };
     }
     catch (err: any) {
       result = { success: false, data: err };
@@ -28,5 +28,5 @@ export function useAsyncStatus(funcAsync: FuncAsync) {
     return result;
   };
 
-  return [loading, callFuncAsync];
+  return [ loading, callFuncAsync ];
 }

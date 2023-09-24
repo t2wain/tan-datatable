@@ -12,7 +12,7 @@ export interface TNDataTableProp {
 
 export const TNDataTable: React.FC<TNDataTableProp> = ({ tblData, colDefs, order }): JSX.Element => {
   const htmlTableRef = useRef<HTMLTableElement>(null);
-  const [dt, setDt] = useState<Api<any>>() as [Api<any>, React.Dispatch<React.SetStateAction<Api<any> | undefined>>];
+  const [dt, setDt] = useState<Api<any> | undefined>();
 
 
   useEffect(() => {

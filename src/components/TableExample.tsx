@@ -77,10 +77,6 @@ const order: ColSortOrder = [[6, "desc"]];
 
 const TableExample: React.FC = (props): JSX.Element => {
 
-  // setup a closure to capture the refresh variable
-  let refresh = false;
-  const getData = () => getExampleData(refresh);
-
   const [tblData, setTblData] = useState<any[]>([]);
   const [message, setMessage] = useState("");
 
@@ -89,27 +85,27 @@ const TableExample: React.FC = (props): JSX.Element => {
   const [
     loading, // disable the refresh btn while waiting for the data
     callFuncAsync // function to reload the data
-  ] = useAsyncStatus(getData) as [boolean, () => Promise<FuncResult>];
+  ] = useAsyncStatus(getExampleData);
 
 
-  function loadData() {
+  function loadData(refresh: boolean) {
     setMessage("Load data. Please wait...");
-    callFuncAsync()
+    callFuncAsync(refresh)
       .then(result => {
         setTblData(result.success ? result.data : []);
         setMessage(result.success ? "" : "Loading data failed. An error has occurred.");
-        refresh = false;
+        if (!result.success)
+          console.log(result.data);
       });
   }
 
-  useEffect(() => loadData(), []);
+  useEffect(() => loadData(false), []);
 
   function Refresh() {
     // call the web service
     // false: get the data from cache
-    refresh = true;
     setTblData([]); // clear the data
-    loadData();
+    loadData(true);
   }
 
   return (
@@ -117,7 +113,7 @@ const TableExample: React.FC = (props): JSX.Element => {
       <h2 className="h2 text-center">Data Table with React Typescript</h2>
       <div className="mt-5 mb-3">
         <button className="btn btn-primary" disabled={loading} onClick={Refresh}>Refresh</button>
-        { message ? <span className=" mx-3 py-1 px-2 text-bg-success bg-opacity-50">{message}</span> : null }
+        {message ? <span className=" mx-3 py-1 px-2 text-bg-success bg-opacity-50">{message}</span> : null}
       </div>
       {/* Display the data in the DataTable */}
       <TNDataTable {...{ tblData, colDefs, order }} />
