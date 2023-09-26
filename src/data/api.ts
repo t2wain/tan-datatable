@@ -7,10 +7,10 @@ const generateData = () => {
     const rowNum = r(100);
     let data: object[] = [];
     for (let i = 0; i < rowNum; i++) {
-        let j = i * 1000;
+        let j = i * 2 + 10;
         data.push({
-            keyStoreName: `keyStoreName${r(i)}`, siteCity: `siteCity${r(i)}`, productTag: `productTag${r(i)}`, userName: `userName${r(i)}`, machineName: `machineName${r(i)}`,
-            requestTime: rd(), returnTime: rd(), projectName: `projectName${r(i)}`, usageMinutes: r(i), source: `source${r(i)}`
+            keyStoreName: `keyStoreName${r(j)}`, siteCity: `siteCity${r(j)}`, productTag: `productTag${r(j)}`, userName: `userName${r(j)}`, machineName: `machineName${r(j)}`,
+            requestTime: rd(), returnTime: rd(), projectName: `projectName${r(j)}`, usageMinutes: r(j), source: `source${r(j)}`
         });
     }
     return data;

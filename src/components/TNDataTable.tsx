@@ -12,23 +12,23 @@ export interface TNDataTableProp {
 
 export const TNDataTable: React.FC<TNDataTableProp> = ({ tblData, colDefs, order }): JSX.Element => {
   const htmlTableRef = useRef<HTMLTableElement>(null);
-  const [dt, setDt] = useState<Api<any> | undefined>();
+  const dt = useRef<Api<any> | undefined>();
 
 
   useEffect(() => {
-    if (dt) {
-      destroy(dt);
+    if (dt.current) {
+      destroy(dt.current);
       console.log("re-init data table.");
     }
 
     // A one time setup of the DataTable when the component mounted
     const ldt = init(htmlTableRef.current as HTMLTableElement, colDefs, order, tblData);
-    setDt(ldt);
+    dt.current = ldt;
     console.log("mounted");
     return () => {
       // cleanup when component unmounted
       destroy(ldt);
-      setDt(undefined);
+      dt.current = undefined;
       console.log("unmounted");
     }
   }, [colDefs]);
@@ -36,10 +36,10 @@ export const TNDataTable: React.FC<TNDataTableProp> = ({ tblData, colDefs, order
 
   useEffect(() => {
     // re-rendering of the DataTable is done by JQuery
-    if (dt) {
-      reloadTableData(dt, tblData);
-      if (tblData && tblData.length > 0) initHeaderFilters(dt);
-      else clearFilter(dt);
+    if (dt.current) {
+      reloadTableData(dt.current, tblData);
+      if (tblData && tblData.length > 0) initHeaderFilters(dt.current);
+      else clearFilter(dt.current);
       console.log("refresh: ", tblData ? tblData.length : 0);
     }
   }, [tblData, colDefs]) // run only when the data changed
